@@ -51,8 +51,9 @@ def main():
 
     ray.init(ignore_reinit_error=True)
 
-    ds = ray.data.from_pandas(df)
-
+    # ds = ray.data.from_pandas(df)
+    # ds = ray.data.from_pandas(df).repartition(args.actors * 8)
+    ds = ray.data.from_pandas(df, override_num_blocks=args.actors * 8)
     ds_emb = ds.map_batches(
         EmbedUDF,
         compute=ActorPoolStrategy(size=args.actors),
